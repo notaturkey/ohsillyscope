@@ -1,6 +1,7 @@
 make.exe --dry-run --keep-going --print-directory
 make: Entering directory 'c:/Users/mcdon/dev/ohsillyscope'
-g++ -Imatrix/include -Wall -O3 -g -Wextra -Wno-unused-parameter osc.cc -c -o osc.o -lasound -Lmatrix/lib -Lgame/lib/ -lgame -lrgbmatrix -lrt -lm -lpthread -lncurses  
-g++ -Wall -O3 -g -Wextra -Wno-unused-parameter osc.o -o osc -lasound -Lmatrix/lib -Lgame/lib/ -lgame -lrgbmatrix -lrt -lm -lpthread -lncurses 
+g++ -Imatrix/include -Wall -O3 -g -Wextra -Wno-unused-parameter osc.cc -c -o osc.o -lasound -Lmatrix/lib -lrgbmatrix -lrt -lm -lpthread -lncurses  
+g++ -Wall -O3 -g -Wextra -Wno-unused-parameter osc.o -o osc -lasound -Lmatrix/lib -lrgbmatrix -lrt -lm -lpthread -lncurses 
+ 
 make: Leaving directory 'c:/Users/mcdon/dev/ohsillyscope'
  

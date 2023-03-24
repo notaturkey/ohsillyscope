@@ -168,7 +168,7 @@ main (int argc, char *argv[])
                     snd_strerror (err));
             exit (1);
         }
-        DrawOnCanvas(canvas, buf, buf2, buf3,r,g,b);
+        DrawOnCanvas(canvas, buf, r,g,b);
         signal(SIGTERM, InterruptHandler);
         signal(SIGINT, InterruptHandler);
     }
