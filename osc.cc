@@ -119,56 +119,12 @@ main (int argc, char *argv[])
                 snd_strerror (err));
         exit (1);
     }
-
-
-    float r = 0;
-    float g = 0;
-    float b = 0;
-    bool rup = true;
-    bool bup = true;
-    bool gup = true;
-    while (true) {
-        if (rup){
-            r = r+.01;
-        }
-        else{
-            r = r-.01;
-        }
-        if (bup){
-            b = b+.001;
-        }else{
-            b = b-.001;
-        }
-        if (gup){
-            g = g+.025;
-        }else{
-            g = g-.025;
-        }
-
-        if (r >= 1){
-            rup = false;
-        }
-        if (r <= 0 ){
-            rup = true;
-        }
-        if (b >= 1){
-            bup = false;
-        }
-        if (b <= 0){
-            bup = true;
-        }
-        if (g >= 1){
-            gup = false;
-        }
-        if (g <= 0){
-            gup = true;
-        }
         if ((err = snd_pcm_readi (capture_handle, buf, 128)) != 128) {
             fprintf (stderr, "read from audio interface failed (%s)\n",
                     snd_strerror (err));
             exit (1);
         }
-        DrawOnCanvas(canvas, buf, r,g,b);
+        DrawOnCanvas(canvas, buf, 0,1,0);
         signal(SIGTERM, InterruptHandler);
         signal(SIGINT, InterruptHandler);
     }
