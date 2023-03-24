@@ -7,7 +7,7 @@ Sorry in advance if this readme is too vague, i made this project months ago and
 if you wanna make this repo better please submit a pr and ill gladly let people collaborate!
 
 ## how to build and run the ohsillyscope
-This repo is based off the https://github.com/hzeller/rpi-rgb-led-matrix project, so youll have to already have the matrix and raspberry pi setup per there instructions, the rest is pretty easy to get going.
+This repo is based off the https://github.com/hzeller/rpi-rgb-led-matrix project, so youll have to already have the matrix and raspberry pi setup per their instructions, the rest is pretty easy to get going.
 
 clone this repo into your pi\
 clone the submodule 
