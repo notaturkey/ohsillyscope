@@ -118,7 +118,7 @@ main (int argc, char *argv[])
         fprintf (stderr, "cannot prepare audio interface for use (%s)\n",
                 snd_strerror (err));
         exit (1);
-    }
+
         if ((err = snd_pcm_readi (capture_handle, buf, 128)) != 128) {
             fprintf (stderr, "read from audio interface failed (%s)\n",
                     snd_strerror (err));
