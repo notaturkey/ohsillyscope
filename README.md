@@ -20,7 +20,7 @@ make the matrix submodule (this might take a bit of effort, i forgot most of the
 cd ./matrix
 make
 ```
-then make the osc project (again here you might need to install some libraries, i completly forgot what i installed to get it working. If someone does this and wants to make this readme better please submit a pr)
+then make the osc project (again here you might need to install some libraries, i completely forgot what i installed to get it working. If someone does this and wants to make this readme better please submit a pr)
 ```
 cd ..
 make
