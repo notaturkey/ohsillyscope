@@ -1,40 +1,51 @@
-# ohsillyscope
-making this project open source for the peeps \
-Tag me if you use it! \
-instagram: @thomas_is_lame
+# OhSillyScope
+For any questions or inquiries, you can reach out to the project creator on Instagram: [@thomas_is_lame](https://www.instagram.com/thomas_is_lame/)
+Tag me if you use it! 
 
-Sorry in advance if this readme is too vague, i made this project months ago and forgot all the initial setup i had to do.\
-if you wanna make this repo better please submit a pr and ill gladly let people collaborate!
+## Prerequisites
+Before you start, ensure you have the following:
 
-## how to build and run the ohsillyscope
-This repo is based off the https://github.com/hzeller/rpi-rgb-led-matrix project, so youll have to already have the matrix and raspberry pi setup per their instructions, the rest is pretty easy to get going.
+- A Raspberry Pi set up as per the instructions provided in the [rpi-rgb-led-matrix repository](https://github.com/hzeller/rpi-rgb-led-matrix).
+- Basic knowledge of working with submodules in Git.
 
-clone this repo into your pi\
-clone the submodule 
+## Getting Started
+Clone this repository and initialize the submodule by running the following commands:
+
 ```
-git submodule init 
-git submodule update
+git clone https://github.com/USERNAME/ohsillyscope.git
+cd ohsillyscope
+git submodule update --init
 ```
-make the matrix submodule (this might take a bit of effort, i forgot most of the libraries i had to install on my pi)
+
+Navigate to the matrix directory and build the matrix submodule:
+
 ```
 cd ./matrix
 make
 ```
-then make the osc project (again here you might need to install some libraries, i completely forgot what i installed to get it working. If someone does this and wants to make this readme better please submit a pr)
+
+Return to the root directory and build the OhSillyScope project:
+
 ```
 cd ..
 make
 ```
-finally were ready to run the ohsillyscope\
-the code uses alsa to interpret an audio signal, so you have to pass which audio card it is reading from.\
-to find your audio interface, run
+
+## Configuration 
+Please note that the setup process might require additional libraries, particularly for the matrix submodule. If you encounter issues during this step, refer to the [rpi-rgb-led-matrix documentation](https://github.com/hzeller/rpi-rgb-led-matrix) for troubleshooting guidance.
+
+## Running OhSillyScope
+OhSillyScope utilizes ALSA to interpret audio signals. To run the project, you need to specify the audio interface you want to capture from. First, identify your audio interface by running:
+
 ```
 aplay -l
 ```
-then use the card number that corresponds to the audio you want to capture. In my case my interface shows up as card 1 so the startup command is:
+
+Identify the card number corresponding to your desired audio input. For instance, if your interface shows up as card 1, the startup command would be:
+
 ```
 ./osc "hw:1"
 ```
 
-have fun :)
-
+## Contributing
+If you find ways to improve this project or fix any issues, please submit a pull request. Your collaboration helps make this project better for everyone.
