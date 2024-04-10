@@ -15,18 +15,27 @@ clone the submodule
 git submodule init 
 git submodule update
 ```
-make the matrix submodule (this might take a bit of effort, i forgot most of the libraries i had to install on my pi)
+make the matrix submodule
 ```
 cd ./matrix
 make
 ```
-then make the osc project (again here you might need to install some libraries, i completely forgot what i installed to get it working. If someone does this and wants to make this readme better please submit a pr)
+install some needed libraries for this project to compile
+```
+sudo apt-get install libasound2-dev
+sudo apt-get install libncurses-dev
+```
+grant access to the interface youre using
+```
+sudo adduser root audio
+```
+then make the osc project
 ```
 cd ..
 make
 ```
 finally were ready to run the ohsillyscope\
-the code uses alsa to interpret an audio signal, so you have to pass which audio card it is reading from.\
+the code uses alsa/pulseaudio to interpret an audio signal, so you have to pass which audio card it is reading from.\
 to find your audio interface, run
 ```
 aplay -l
