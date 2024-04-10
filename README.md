@@ -27,7 +27,7 @@ sudo apt-get install libncurses-dev
 ```
 grant access to the interface youre using
 ```
-sudo adduser root audio
+sudo adduser <username> audio
 ```
 then make the osc project
 ```
