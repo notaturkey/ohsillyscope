@@ -217,8 +217,8 @@ main (int argc, char *argv[])
         rgb_matrix::DrawLine(canvas, rotatedPoints.at(7).at(0), rotatedPoints.at(7).at(1), rotatedPoints.at(3).at(0), rotatedPoints.at(3).at(1), color);
         
         anglex += 0.01;
-	angley += 0.04;
-	anglez += 0.07;
+	angley += 0.004;
+	anglez += 0.007;
         if (cubeScale > 10){
             cubeScale -= 0.1;
         }
