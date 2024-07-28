@@ -12,7 +12,7 @@
 #include <alsa/asoundlib.h>
         
 #include "led-matrix.h"
-
+#include "graphics.h"
 #include <unistd.h>
 #include <math.h>
 #include <signal.h>
@@ -111,17 +111,18 @@ main (int argc, char *argv[])
             {0,1,0},
             {-1*sin(angle),0,cos(angle)}
         };
-
+        
+        Color color(255, 255, 0);
+        rgb_matrix::DrawLine(canvas, 10, 10, 15, 15, color);
         for (auto & point : cubePoints){
             vector<float> rotatedZPoint = multiplyMatrices(rotationZMatrix,point);
             vector<float> rotatedXPoint = multiplyMatrices(rotationXMatrix,rotatedZPoint);
-	    vector<float> rotatedYPoint = multiplyMatrices(rotationYMatrix,rotatedXPoint);
-	    vector<float> projected = project2D(rotatedYPoint);
+            vector<float> rotatedYPoint = multiplyMatrices(rotationYMatrix,rotatedXPoint);
+            vector<float> projected = project2D(rotatedYPoint);
             float x = cubePOSX+projected.at(0)*cubeScale;
             float y = cubePOSY+projected.at(1)*cubeScale;
             canvas->SetPixel((int) x, (int) y, 255, 0, 0);
         }
-        usleep(250000);
         canvas->Clear();
         angle += 0.1;
         signal(SIGTERM, InterruptHandler);
