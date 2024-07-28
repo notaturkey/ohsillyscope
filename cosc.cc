@@ -34,16 +34,6 @@ static void InterruptHandler(int signo) {
 
 
 vector<float> multiplyMatrices(vector<vector<float>> A,vector<float> B) {
-    int rowsA = A.size();
-    int colsA = A[0].size();
-    int rowsB = 1;
-    int colsB = B.size();
-
-    // Ensure matrices can be multiplied
-    if (colsA != rowsB) {
-        throw invalid_argument("Number of columns in A must be equal to the number of rows in B.");
-    }
-
     // Initialize result matrix with zeros
     vector<float> C;
     int i = 0;
