@@ -76,6 +76,7 @@ main (int argc, char *argv[])
     defaults.cols = 64;
     defaults.chain_length = 1;
     defaults.parallel = 1;
+    rgb_matrix::Color color(0, 255, 0);
     Canvas *canvas = RGBMatrix::CreateFromFlags(&argc, &argv, &defaults);
     if (canvas == NULL)
         return 1;
@@ -112,9 +113,8 @@ main (int argc, char *argv[])
             {-1*sin(angle),0,cos(angle)}
         };
         
-	rgb_matrix::Color color(255, 255, 0);
-        
-	vector<vector<int>> rotatedPoints={};
+    
+    vector<vector<int>> rotatedPoints={};
         for (auto & point : cubePoints){	
             vector<float> rotatedZPoint = multiplyMatrices(rotationZMatrix,point);
             vector<float> rotatedXPoint = multiplyMatrices(rotationXMatrix,rotatedZPoint);
@@ -125,8 +125,23 @@ main (int argc, char *argv[])
             canvas->SetPixel((int) x, (int) y, 255, 0, 0);
 	    rotatedPoints.push_back({(int) x, (int) y});
         }
+        // first pane
         rgb_matrix::DrawLine(canvas, rotatedPoints.at(0).at(0), rotatedPoints.at(0).at(1), rotatedPoints.at(1).at(0), rotatedPoints.at(1).at(1), color);
-	usleep(50000);
+        rgb_matrix::DrawLine(canvas, rotatedPoints.at(1).at(0), rotatedPoints.at(1).at(1), rotatedPoints.at(2).at(0), rotatedPoints.at(2).at(1), color);
+        rgb_matrix::DrawLine(canvas, rotatedPoints.at(2).at(0), rotatedPoints.at(2).at(1), rotatedPoints.at(3).at(0), rotatedPoints.at(3).at(1), color);
+        rgb_matrix::DrawLine(canvas, rotatedPoints.at(3).at(0), rotatedPoints.at(3).at(1), rotatedPoints.at(0).at(0), rotatedPoints.at(0).at(1), color);
+	    
+        // second pane
+        rgb_matrix::DrawLine(canvas, rotatedPoints.at(0).at(0), rotatedPoints.at(0).at(1), rotatedPoints.at(1).at(0), rotatedPoints.at(1).at(1), color);
+        rgb_matrix::DrawLine(canvas, rotatedPoints.at(1).at(0), rotatedPoints.at(1).at(1), rotatedPoints.at(2).at(0), rotatedPoints.at(2).at(1), color);
+        rgb_matrix::DrawLine(canvas, rotatedPoints.at(2).at(0), rotatedPoints.at(2).at(1), rotatedPoints.at(3).at(0), rotatedPoints.at(3).at(1), color);
+        rgb_matrix::DrawLine(canvas, rotatedPoints.at(3).at(0), rotatedPoints.at(3).at(1), rotatedPoints.at(4).at(0), rotatedPoints.at(4).at(1), color);
+        
+
+
+
+
+        usleep(50000);
         canvas->Clear();
         angle += 0.1;
         signal(SIGTERM, InterruptHandler);
