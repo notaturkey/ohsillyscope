@@ -71,7 +71,7 @@ vector<float> project2D (vector<float> vertex) {
     // return projectedPoint;
 }
 
-int main (int argc, char *argv[])
+main (int argc, char *argv[])
 {
     // matrix is hardcoded for 64x64 unless someone wants to fix that
     RGBMatrix::Options defaults;
@@ -105,12 +105,11 @@ int main (int argc, char *argv[])
             {sin(angle), cos(angle), 0},
             {0,0,1}
         };
-
         
-
         for (auto & point : cubePoints){
-            int x = (int) cubePOSX+project2D(point).at(0)*cubeScale;
-            int y = (int) cubePOSY+project2D(point).at(1)*cubeScale;
+            vector<float> rotatedPoint = multiplyMatrices(rotationZMatrix,point);
+            int x = (int) cubePOSX+project2D(rotatedPoint).at(0)*cubeScale;
+            int y = (int) cubePOSY+project2D(rotatedPoint).at(1)*cubeScale;
             canvas->SetPixel(x, y, 255, 0, 0);
         }
         angle += 0.01;
