@@ -22,7 +22,7 @@ static void InterruptHandler(int signo) {
   interrupt_received = true;
 }
 
-int SetCubeScale(short buf[]){
+float SetCubeScale(short buf[]){
     // audio wave has minimum amplitude of -32,768 and a maximum value of 32,767
     bool isClipping = false;
     int cubeScale = 10;
@@ -75,7 +75,7 @@ main (int argc, char *argv[])
     
     // cube setup
     rgb_matrix::Color color(0, 0, 255);
-    int cubeScale = 10;
+    float cubeScale = 10;
     int cubePOSX = 32;
     int cubePOSY = 32;
     float angle = 0;
@@ -216,9 +216,9 @@ main (int argc, char *argv[])
         rgb_matrix::DrawLine(canvas, rotatedPoints.at(6).at(0), rotatedPoints.at(6).at(1), rotatedPoints.at(2).at(0), rotatedPoints.at(2).at(1), color);
         rgb_matrix::DrawLine(canvas, rotatedPoints.at(7).at(0), rotatedPoints.at(7).at(1), rotatedPoints.at(3).at(0), rotatedPoints.at(3).at(1), color);
         
-        angle += 0.001;
+        angle += 0.01;
         if (cubeScale > 10){
-            cubeScale -= 1;
+            cubeScale -= 0.1;
         }
 
         signal(SIGTERM, InterruptHandler);
