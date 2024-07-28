@@ -59,14 +59,14 @@ vector<vector<float>> multiplyMatrices(vector<vector<float>> A,vector<vector<flo
     return C;
 }
 
-vector<vector<float>> project2D (vector<float> point) {
+vector<vector<float>> project2D (vector<vector<float>> matrix) {
     vector<float> projectedPoint;
     vector<vector<float>> projectionMatrix = {
         {1,0,0},
         {0,1,0},
         {0,0,0}
     };
-    return multiplyMatrices(projectionMatrix, point);
+    return multiplyMatrices(projectionMatrix, matrix);
 
     // int i = 0;
     // for (auto & element : projectionMatrix){    
@@ -99,14 +99,14 @@ int main (int argc, char *argv[])
     int cubePOSY = 32;
     float angle = 0;
     vector<vector<float>> cubePoints = {
-        {1, 1, 1},
-        {1, 1, -1},
-        {1, -1, 1},
-        {1, -1, -1},
-        {-1, 1, -1},
-        {-1, 1, 1},
-        {-1, -1, 1},
-        {-1, -1, -1}
+        {{1, 1, 1}},
+        {{1, 1, -1}},
+        {{1, -1, 1}},
+        {{1, -1, -1}},
+        {{-1, 1, -1}},
+        {{-1, 1, 1}},
+        {{-1, -1, 1}},
+        {{-1, -1, -1}}
     };
     
     while (true) {
