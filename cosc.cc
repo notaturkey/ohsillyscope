@@ -1,16 +1,6 @@
-//   open_the_device();
-//   set_the_parameters_of_the_device();
-//   while (!done) {
-//        /* one or both of these */
-//        receive_audio_data_from_the_device();
-//    deliver_audio_data_to_the_device();
-//   }
-//   close the device
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <alsa/asoundlib.h>
-        
 #include "led-matrix.h"
 #include "graphics.h"
 #include <unistd.h>
@@ -32,6 +22,21 @@ static void InterruptHandler(int signo) {
   interrupt_received = true;
 }
 
+int SetCubeScale(short buf[]){
+    // audio wave has minimum amplitude of -32,768 and a maximum value of 32,767
+    bool isClipping = false;
+    int cubeScale = 10;
+    for (int i=0; i<128; i++){
+        if(buf[i] < -32600 || buf[i] > 32600){
+            isClipping = true;
+        }
+    }
+
+    if(isClipping){
+        cubeScale = 15;
+    }
+    return cubeScale;
+}
 
 vector<float> multiplyMatrices(const vector<vector<float>>& A, const vector<float>& B) {
     vector<float> C(A.size(), 0); // Initialize result vector with zeros
@@ -53,18 +58,6 @@ vector<float> project2D (vector<float> vertex) {
         {0,0,0}
     };
     return multiplyMatrices(projectionMatrix, vertex);
-
-    // int i = 0;
-    // for (auto & element : projectionMatrix){    
-    //     int product = 0;
-    //     for (auto & projectionMatrixPoint : element){
-    //         product += projectionMatrixPoint * point.at(i);
-    //     }
-    //     i += 1;
-    //     projectedPoint.push_back(product);
-    // }
-
-    // return projectedPoint;
 }
 
 main (int argc, char *argv[])
@@ -76,11 +69,12 @@ main (int argc, char *argv[])
     defaults.cols = 64;
     defaults.chain_length = 1;
     defaults.parallel = 1;
-    rgb_matrix::Color color(0, 0, 255);
     Canvas *canvas = RGBMatrix::CreateFromFlags(&argc, &argv, &defaults);
     if (canvas == NULL)
         return 1;
     
+    // cube setup
+    rgb_matrix::Color color(0, 0, 255);
     int cubeScale = 10;
     int cubePOSX = 32;
     int cubePOSY = 32;
@@ -95,8 +89,84 @@ main (int argc, char *argv[])
         {-1, -1, 1},
         {-1, -1, -1}
     };
+
+    // sound stuff
+    int i;
+    int err;
+    short buf[128];
+    snd_pcm_t *capture_handle;
+    snd_pcm_hw_params_t *hw_params;
+    unsigned int dumb = 10;
+    unsigned int* test = &dumb;
+    if ((err = snd_pcm_open (&capture_handle, argv[1], SND_PCM_STREAM_CAPTURE, 0)) < 0) {
+        fprintf (stderr, "cannot open audio device %s (%s)\n", 
+                argv[1],
+                snd_strerror (err));
+        exit (1);
+    }
+        
+    if ((err = snd_pcm_hw_params_malloc (&hw_params)) < 0) {
+        fprintf (stderr, "cannot allocate hardware parameter structure (%s)\n",
+                snd_strerror (err));
+        exit (1);
+    }
+                
+    if ((err = snd_pcm_hw_params_any (capture_handle, hw_params)) < 0) {
+        fprintf (stderr, "cannot initialize hardware parameter structure (%s)\n",
+                snd_strerror (err));
+        exit (1);
+    }
+
+    if ((err = snd_pcm_hw_params_set_access (capture_handle, hw_params, SND_PCM_ACCESS_RW_INTERLEAVED)) < 0) {
+        fprintf (stderr, "cannot set access type (%s)\n",
+                snd_strerror (err));
+        exit (1);
+    }
+
+    if ((err = snd_pcm_hw_params_set_format (capture_handle, hw_params, SND_PCM_FORMAT_S16_LE)) < 0) {
+        fprintf (stderr, "cannot set sample format (%s)\n",
+                snd_strerror (err));
+        exit (1);
+    }
+
+    if ((err = snd_pcm_hw_params_set_rate_near (capture_handle, hw_params, test, 0)) < 0) {
+        fprintf (stderr, "cannot set sample rate (%s)\n",
+                snd_strerror (err));
+        exit (1);
+    }
+
+    if ((err = snd_pcm_hw_params_set_channels (capture_handle, hw_params, 2)) < 0) {
+        fprintf (stderr, "cannot set channel count (%s)\n",
+                snd_strerror (err));
+        exit (1);
+    }
+
+    if ((err = snd_pcm_hw_params (capture_handle, hw_params)) < 0) {
+        fprintf (stderr, "cannot set parameters (%s)\n",
+                snd_strerror (err));
+        exit (1);
+    }
+
+    snd_pcm_hw_params_free (hw_params);
+
+    if ((err = snd_pcm_prepare (capture_handle)) < 0) {
+        fprintf (stderr, "cannot prepare audio interface for use (%s)\n",
+                snd_strerror (err));
+        exit (1);
+    }
     
     while (true) {
+        // read interface into buffer
+        if ((err = snd_pcm_readi (capture_handle, buf, 128)) != 128) {
+            fprintf (stderr, "read from audio interface failed (%s)\n",
+                    snd_strerror (err));
+            exit (1);
+        }
+        
+        // set scale based off buffer
+        cubeScale = SetCubeScale(buf);
+        
+        // calulate position cube and render as 2D
         vector<vector<float>> rotationZMatrix = {
             {cos(angle),-1*sin(angle), 0},
             {sin(angle), cos(angle), 0},
@@ -123,8 +193,10 @@ main (int argc, char *argv[])
             float x = cubePOSX+projected.at(0)*cubeScale;
             float y = cubePOSY+projected.at(1)*cubeScale;
             canvas->SetPixel((int) x, (int) y, 255, 0, 0);
-	    rotatedPoints.push_back({(int) x, (int) y});
+            rotatedPoints.push_back({(int) x, (int) y});
         }
+
+        // draw cube
         // first pane
         rgb_matrix::DrawLine(canvas, rotatedPoints.at(0).at(0), rotatedPoints.at(0).at(1), rotatedPoints.at(1).at(0), rotatedPoints.at(1).at(1), color);
         rgb_matrix::DrawLine(canvas, rotatedPoints.at(1).at(0), rotatedPoints.at(1).at(1), rotatedPoints.at(3).at(0), rotatedPoints.at(3).at(1), color);
@@ -143,10 +215,12 @@ main (int argc, char *argv[])
         rgb_matrix::DrawLine(canvas, rotatedPoints.at(6).at(0), rotatedPoints.at(6).at(1), rotatedPoints.at(2).at(0), rotatedPoints.at(2).at(1), color);
         rgb_matrix::DrawLine(canvas, rotatedPoints.at(7).at(0), rotatedPoints.at(7).at(1), rotatedPoints.at(3).at(0), rotatedPoints.at(3).at(1), color);
         
-
-        usleep(50000);
         canvas->Clear();
-        angle += 0.1;
+        angle += 0.001;
+        if (cubeScale > 10){
+            cubeScale -= 1;
+        }
+
         signal(SIGTERM, InterruptHandler);
         signal(SIGINT, InterruptHandler);
     }
