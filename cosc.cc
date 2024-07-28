@@ -132,14 +132,17 @@ main (int argc, char *argv[])
         rgb_matrix::DrawLine(canvas, rotatedPoints.at(3).at(0), rotatedPoints.at(3).at(1), rotatedPoints.at(0).at(0), rotatedPoints.at(0).at(1), color);
 	    
         // second pane
-        rgb_matrix::DrawLine(canvas, rotatedPoints.at(0).at(0), rotatedPoints.at(0).at(1), rotatedPoints.at(1).at(0), rotatedPoints.at(1).at(1), color);
-        rgb_matrix::DrawLine(canvas, rotatedPoints.at(1).at(0), rotatedPoints.at(1).at(1), rotatedPoints.at(2).at(0), rotatedPoints.at(2).at(1), color);
-        rgb_matrix::DrawLine(canvas, rotatedPoints.at(2).at(0), rotatedPoints.at(2).at(1), rotatedPoints.at(3).at(0), rotatedPoints.at(3).at(1), color);
-        rgb_matrix::DrawLine(canvas, rotatedPoints.at(3).at(0), rotatedPoints.at(3).at(1), rotatedPoints.at(4).at(0), rotatedPoints.at(4).at(1), color);
+        rgb_matrix::DrawLine(canvas, rotatedPoints.at(4).at(0), rotatedPoints.at(4).at(1), rotatedPoints.at(5).at(0), rotatedPoints.at(5).at(1), color);
+        rgb_matrix::DrawLine(canvas, rotatedPoints.at(5).at(0), rotatedPoints.at(5).at(1), rotatedPoints.at(6).at(0), rotatedPoints.at(6).at(1), color);
+        rgb_matrix::DrawLine(canvas, rotatedPoints.at(6).at(0), rotatedPoints.at(6).at(1), rotatedPoints.at(7).at(0), rotatedPoints.at(7).at(1), color);
+        rgb_matrix::DrawLine(canvas, rotatedPoints.at(7).at(0), rotatedPoints.at(7).at(1), rotatedPoints.at(4).at(0), rotatedPoints.at(4).at(1), color);
+
+        // last 4 lines
+        rgb_matrix::DrawLine(canvas, rotatedPoints.at(4).at(0), rotatedPoints.at(4).at(1), rotatedPoints.at(1).at(0), rotatedPoints.at(1).at(1), color);
+        rgb_matrix::DrawLine(canvas, rotatedPoints.at(5).at(0), rotatedPoints.at(5).at(1), rotatedPoints.at(0).at(0), rotatedPoints.at(0).at(1), color);
+        rgb_matrix::DrawLine(canvas, rotatedPoints.at(6).at(0), rotatedPoints.at(6).at(1), rotatedPoints.at(3).at(0), rotatedPoints.at(3).at(1), color);
+        rgb_matrix::DrawLine(canvas, rotatedPoints.at(7).at(0), rotatedPoints.at(7).at(1), rotatedPoints.at(2).at(0), rotatedPoints.at(2).at(1), color);
         
-
-
-
 
         usleep(50000);
         canvas->Clear();
