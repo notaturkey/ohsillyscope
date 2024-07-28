@@ -24,15 +24,15 @@ static void InterruptHandler(int signo) {
 
 float SetCubeScale(short buf[]){
     // audio wave has minimum amplitude of -32,768 and a maximum value of 32,767
-    bool isClipping = false;
+    int isClipping = 0;
     int cubeScale = 10;
     for (int i=0; i<128; i++){
         if(buf[i] < -32767 || buf[i] > 32766){
-            isClipping = true;
+            isClipping += 1;
         }
     }
-
-    if(isClipping){
+    
+    if(isClipping > 32){
         cubeScale = 15;
     }
     return cubeScale;
@@ -98,7 +98,7 @@ main (int argc, char *argv[])
     short buf[128];
     snd_pcm_t *capture_handle;
     snd_pcm_hw_params_t *hw_params;
-    unsigned int dumb = 10;
+    unsigned int dumb = 1;
     unsigned int* test = &dumb;
     if ((err = snd_pcm_open (&capture_handle, argv[1], SND_PCM_STREAM_CAPTURE, 0)) < 0) {
         fprintf (stderr, "cannot open audio device %s (%s)\n", 
@@ -217,17 +217,14 @@ main (int argc, char *argv[])
         rgb_matrix::DrawLine(canvas, rotatedPoints.at(7).at(0), rotatedPoints.at(7).at(1), rotatedPoints.at(3).at(0), rotatedPoints.at(3).at(1), color);
         
         anglex += 0.01;
-	angley += 0.004;
-	anglez += 0.007;
+	angley += 0.0004;
+	anglez += 0.0007;
         if (cubeScale > 10){
-            cubeScale -= 0.1;
+            cubeScale -= 0.01;
         }
-	else{
 	    // set scale based off buffer
             cubeScale = SetCubeScale(buf);
-	}
-
-        signal(SIGTERM, InterruptHandler);
+	signal(SIGTERM, InterruptHandler);
         signal(SIGINT, InterruptHandler);
     }
 
