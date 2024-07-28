@@ -36,8 +36,8 @@ static void InterruptHandler(int signo) {
 vector<float> multiplyMatrices(vector<vector<float>> A,vector<float> B) {
     int rowsA = A.size();
     int colsA = A[0].size();
-    int rowsB = B.size();
-    int colsB = B[0].size();
+    int rowsB = 1;
+    int colsB = B.size();
 
     // Ensure matrices can be multiplied
     if (colsA != rowsB) {
@@ -45,15 +45,15 @@ vector<float> multiplyMatrices(vector<vector<float>> A,vector<float> B) {
     }
 
     // Initialize result matrix with zeros
-    vector<vector<float>> C(rowsA, vector<float>(colsB, 0));
-
-    // Perform matrix multiplication
-    for (int i = 0; i < rowsA; ++i) {
-        for (int j = 0; j < colsB; ++j) {
-            for (int k = 0; k < colsA; ++k) {
-                C[i][j] += A[i][k] * B[k][j];
-            }
+    vector<float> C;
+    int i = 0;
+    for (auto & element : A){    
+        int product = 0;
+        for (auto & APoint : element){
+            product += Apoint * point.at(i);
         }
+        i += 1;
+        C.push_back(product);
     }
 
     return C;
