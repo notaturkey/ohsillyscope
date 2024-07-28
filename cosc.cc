@@ -50,7 +50,7 @@ vector<float> multiplyMatrices(vector<vector<float>> A,vector<float> B) {
     for (auto & element : A){    
         int product = 0;
         for (auto & APoint : element){
-            product += Apoint * point.at(i);
+            product += APoint * B.at(i);
         }
         i += 1;
         C.push_back(product);
