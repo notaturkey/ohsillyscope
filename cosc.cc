@@ -38,7 +38,7 @@ vector<float> multiplyMatrices(vector<vector<float>> A,vector<float> B) {
     vector<float> C;
     int i = 0;
     for (auto & element : A){    
-        int product = 0;
+        float product = 0;
         for (auto & APoint : element){
             product += APoint * B.at(i);
         }
@@ -109,11 +109,13 @@ main (int argc, char *argv[])
         for (auto & point : cubePoints){
             vector<float> rotatedPoint = multiplyMatrices(rotationZMatrix,point);
             vector<float> projected = project2D(rotatedPoint);
-	        int x = cubePOSX+((int)projected.at(0))*cubeScale;
-            int y = cubePOSY+((int)projected.at(1))*cubeScale;
-            canvas->SetPixel(x, y, 255, 0, 0);
+            float x = cubePOSX+projected.at(0)*cubeScale;
+            float y = cubePOSY+projected.at(1)*cubeScale;
+            canvas->SetPixel((int) x, (int) y, 255, 0, 0);
         }
-        angle = 0;
+	usleep(500000);
+	canvas->Clear();
+        angle += 0.1;
         signal(SIGTERM, InterruptHandler);
         signal(SIGINT, InterruptHandler);
     }
