@@ -33,7 +33,7 @@ static void InterruptHandler(int signo) {
 }
 
 
-vector<vector<float>> multiplyMatrices(vector<vector<float>> A,vector<vector<float>> B) {
+vector<float> multiplyMatrices(vector<vector<float>> A,vector<float> B) {
     int rowsA = A.size();
     int colsA = A[0].size();
     int rowsB = B.size();
@@ -59,14 +59,14 @@ vector<vector<float>> multiplyMatrices(vector<vector<float>> A,vector<vector<flo
     return C;
 }
 
-vector<vector<float>> project2D (vector<vector<float>> matrix) {
+vector<float> project2D (vector<float> vertex) {
     vector<float> projectedPoint;
     vector<vector<float>> projectionMatrix = {
         {1,0,0},
         {0,1,0},
         {0,0,0}
     };
-    return multiplyMatrices(projectionMatrix, matrix);
+    return multiplyMatrices(projectionMatrix, vertex);
 
     // int i = 0;
     // for (auto & element : projectionMatrix){    
@@ -98,15 +98,15 @@ int main (int argc, char *argv[])
     int cubePOSX = 32;
     int cubePOSY = 32;
     float angle = 0;
-    vector<vector<vector<float>>> cubePoints = {
-        {{1, 1, 1}},
-        {{1, 1, -1}},
-        {{1, -1, 1}},
-        {{1, -1, -1}},
-        {{-1, 1, -1}},
-        {{-1, 1, 1}},
-        {{-1, -1, 1}},
-        {{-1, -1, -1}}
+    vector<vector<float>> cubePoints = {
+        {1, 1, 1},
+        {1, 1, -1},
+        {1, -1, 1},
+        {1, -1, -1},
+        {-1, 1, -1},
+        {-1, 1, 1},
+        {-1, -1, 1},
+        {-1, -1, -1}
     };
     
     while (true) {
@@ -119,12 +119,9 @@ int main (int argc, char *argv[])
         
 
         for (auto & point : cubePoints){
-            vector<vector<float>> projected = project2D(point);
-            for (auto & element : projected){
-                int x = (int) cubePOSX+element.at(0)*cubeScale;
-                int y = (int) cubePOSY+element.at(1)*cubeScale;
-                canvas->SetPixel(x, y, 255, 0, 0);
-            }
+            int x = (int) cubePOSX+project2D(point).at(0)*cubeScale;
+            int y = (int) cubePOSY+project2D(point).at(1)*cubeScale;
+            canvas->SetPixel(x, y, 255, 0, 0);
         }
         angle += 0.01;
 
