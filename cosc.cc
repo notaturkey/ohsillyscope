@@ -101,15 +101,27 @@ main (int argc, char *argv[])
             {sin(angle), cos(angle), 0},
             {0,0,1}
         };
+        vector<vector<float>> rotationXMatrix = {
+            {1,0,0},
+            {0, cos(angle), -1*sin(angle)},
+            {0, sin(angle), cos(angle)}
+        };
+        vector<vector<float>> rotationYMatrix = {
+            {cos(angle),0,sin(angle)},
+            {0,1,0},
+            {-1*sin(angle),0,cos(angle)}
+        };
 
         for (auto & point : cubePoints){
-            vector<float> rotatedPoint = multiplyMatrices(rotationZMatrix,point);
-            vector<float> projected = project2D(rotatedPoint);
+            vector<float> rotatedZPoint = multiplyMatrices(rotationZMatrix,point);
+            vector<float> rotatedXPoint = multiplyMatrices(rotationXMatrix,rotatedZPoint);
+	    vector<float> rotatedYPoint = multiplyMatrices(rotationYMatrix,rotatedXPoint);
+	    vector<float> projected = project2D(rotatedYPoint);
             float x = cubePOSX+projected.at(0)*cubeScale;
             float y = cubePOSY+projected.at(1)*cubeScale;
             canvas->SetPixel((int) x, (int) y, 255, 0, 0);
         }
-        usleep(500000);
+        usleep(250000);
         canvas->Clear();
         angle += 0.1;
         signal(SIGTERM, InterruptHandler);
