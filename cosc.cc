@@ -235,7 +235,7 @@ main (int argc, char *argv[])
             cubeScale -= 0.01;
         }
 	    // set scale based off buffer
-        cubeScale = SetCubeScale(buf);
+        cubeScale = SetCubeScale(buf, 128);
         signal(SIGTERM, InterruptHandler);
         signal(SIGINT, InterruptHandler);
     }
