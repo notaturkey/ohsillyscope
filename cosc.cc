@@ -32,6 +32,7 @@ static void InterruptHandler(int signo) {
   interrupt_received = true;
 }
 
+//{1, -1, 1}
 vector<int> project2D (vector<int> point) {
     vector<int> projectedPoint;
     vector<vector<int>> projectionMatrix = {
@@ -39,8 +40,8 @@ vector<int> project2D (vector<int> point) {
         {0,1,0}
     };
 
-    for (auto & element : projectionMatrix){
-        int i = 0;
+    int i = 0;
+    for (auto & element : projectionMatrix){    
         int product = 0;
         for (auto & projectionMatrixPoint : element){
             product += projectionMatrixPoint * point.at(i);
@@ -75,8 +76,6 @@ int main (int argc, char *argv[])
         {-1, -1, 1},
         {-1, -1, -1}
     };
-    
-    project2D(cubePoints.at(0));
 
     for (auto & element : cubePoints){
         for (auto & projected : project2D(element)) {
