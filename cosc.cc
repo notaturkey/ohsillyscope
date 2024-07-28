@@ -32,25 +32,52 @@ static void InterruptHandler(int signo) {
   interrupt_received = true;
 }
 
-//{1, -1, 1}
-vector<int> project2D (vector<int> point) {
-    vector<int> projectedPoint;
-    vector<vector<int>> projectionMatrix = {
+
+vector<vector<float>> multiplyMatrices(const std::vector<std::vector<float>>& A, const std::vector<std::vector<float>>& B) {
+    int rowsA = A.size();
+    int colsA = A[0].size();
+    int rowsB = B.size();
+    int colsB = B[0].size();
+
+    // Ensure matrices can be multiplied
+    if (colsA != rowsB) {
+        throw std::invalid_argument("Number of columns in A must be equal to the number of rows in B.");
+    }
+
+    // Initialize result matrix with zeros
+    std::vector<std::vector<float>> C(rowsA, std::vector<int>(colsB, 0));
+
+    // Perform matrix multiplication
+    for (int i = 0; i < rowsA; ++i) {
+        for (int j = 0; j < colsB; ++j) {
+            for (int k = 0; k < colsA; ++k) {
+                C[i][j] += A[i][k] * B[k][j];
+            }
+        }
+    }
+
+    return C;
+}
+
+vector<float> project2D (vector<vector<float>> matrix) {
+    vector<float> projectedPoint;
+    vector<vector<float>> projectionMatrix = {
         {1,0,0},
         {0,1,0}
     };
+    return multiplyMatrices(projectionMatrix, matrix);
 
-    int i = 0;
-    for (auto & element : projectionMatrix){    
-        int product = 0;
-        for (auto & projectionMatrixPoint : element){
-            product += projectionMatrixPoint * point.at(i);
-        }
-        i += 1;
-        projectedPoint.push_back(product);
-    }
+    // int i = 0;
+    // for (auto & element : projectionMatrix){    
+    //     int product = 0;
+    //     for (auto & projectionMatrixPoint : element){
+    //         product += projectionMatrixPoint * point.at(i);
+    //     }
+    //     i += 1;
+    //     projectedPoint.push_back(product);
+    // }
 
-    return projectedPoint;
+    // return projectedPoint;
 }
 
 int main (int argc, char *argv[])
@@ -69,7 +96,8 @@ int main (int argc, char *argv[])
     int cubeScale = 5;
     int cubePOSX = 32;
     int cubePOSY = 32;
-    vector<vector<int>> cubePoints = {
+    float angle = 0;
+    vector<vector<float>> cubePoints = {
         {1, 1, 1},
         {1, 1, -1},
         {1, -1, 1},
@@ -79,19 +107,27 @@ int main (int argc, char *argv[])
         {-1, -1, 1},
         {-1, -1, -1}
     };
-
-
-
     
-
     while (true) {
-        for (auto & element : cubePoints){
-            canvas->SetPixel(cubePOSX+project2D(element).at(0), cubePOSY+project2D(element).at(1), 255, 0, 0);
+        vector<vector<float>> rotationZMatrix = {
+            {cos(angle),-1*sin(angle), 0},
+            {sin(angle), cos(angle), 0},
+            {0,0,1}
+        };
+
+        vector<vector<float>> projectedMatrix = project2D(cubePoints);
+
+        for (auto & element : projectedMatrix){
+            int x = (int) cubePOSX+element.at(0)*cubeScale;
+            int y = (int) cubePOSY+element.at(1)*cubeScale;
+            canvas->SetPixel(x, y, 255, 0, 0);
         }
+        angle += 0.01;
+
         signal(SIGTERM, InterruptHandler);
         signal(SIGINT, InterruptHandler);
     }
 
     canvas->Clear();
-    return 0;
+    exit (0);
 }
