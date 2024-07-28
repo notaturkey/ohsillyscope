@@ -16,3 +16,9 @@ osc: osc.o
 
 osc.o: osc.cc
 	$(CXX) -I$(RGB_INCDIR) $(CXXFLAGS) osc.cc -c -o $@ -lasound $(LDFLAGS) $(RGB_LDFLAGS) 
+
+cosc: cosc.o
+	$(CXX) $(CXXFLAGS) cosc.o -o $@ -lasound $(LDFLAGS) $(RGB_LDFLAGS)
+
+cosc.o: cosc.cc
+	$(CXX) -I$(RGB_INCDIR) $(CXXFLAGS) cosc.cc -c -o $@ -lasound $(LDFLAGS) $(RGB_LDFLAGS) 
