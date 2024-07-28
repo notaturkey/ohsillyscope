@@ -22,21 +22,40 @@ static void InterruptHandler(int signo) {
   interrupt_received = true;
 }
 
-float SetCubeScale(short buf[]){
-    // audio wave has minimum amplitude of -32,768 and a maximum value of 32,767
-    int isClipping = 0;
-    int cubeScale = 10;
-    for (int i=0; i<128; i++){
-        if(buf[i] < -32767 || buf[i] > 32766){
-            isClipping += 1;
-        }
+float CalculateRMS(const short buf[], int size) {
+    float sum = 0;
+    for (int i = 0; i < size; i++) {
+        sum += buf[i] * buf[i];
     }
-    
-    if(isClipping > 32){
-        cubeScale = 15;
-    }
-    return cubeScale;
+    return sqrt(sum / size);
 }
+
+float SetCubeScale(const short buf[], int size) {
+    float rms = CalculateRMS(buf, size);
+    // Define a threshold for significant amplitude
+    float threshold = 2000; // Adjust this value as needed
+    if (rms > threshold) {
+        return 15;
+    } else {
+        return 10;
+    }
+}
+
+// float SetCubeScale(short buf[]){
+//     // audio wave has minimum amplitude of -32,768 and a maximum value of 32,767
+//     int isClipping = 0;
+//     int cubeScale = 10;
+//     for (int i=0; i<128; i++){
+//         if(buf[i] < -32767 || buf[i] > 32766){
+//             isClipping += 1;
+//         }
+//     }
+    
+//     if(isClipping > 32){
+//         cubeScale = 15;
+//     }
+//     return cubeScale;
+// }
 
 vector<float> multiplyMatrices(const vector<vector<float>>& A, const vector<float>& B) {
     vector<float> C(A.size(), 0); // Initialize result vector with zeros
