@@ -27,7 +27,7 @@ float SetCubeScale(short buf[]){
     bool isClipping = false;
     int cubeScale = 10;
     for (int i=0; i<128; i++){
-        if(buf[i] < -32600 || buf[i] > 32600){
+        if(buf[i] < -32767 || buf[i] > 32766){
             isClipping = true;
         }
     }
@@ -78,7 +78,9 @@ main (int argc, char *argv[])
     float cubeScale = 10;
     int cubePOSX = 32;
     int cubePOSY = 32;
-    float angle = 0;
+    float anglex = 0;
+    float angley = 0;
+    float anglez = 0;
     vector<vector<float>> cubePoints = {
         {1, 1, 1},
         {1, 1, -1},
@@ -163,24 +165,22 @@ main (int argc, char *argv[])
             exit (1);
         }
         
-        // set scale based off buffer
-        cubeScale = SetCubeScale(buf);
-        
+                
         // calulate position cube and render as 2D
         vector<vector<float>> rotationZMatrix = {
-            {cos(angle),-1*sin(angle), 0},
-            {sin(angle), cos(angle), 0},
+            {cos(anglez),-1*sin(anglez), 0},
+            {sin(anglez), cos(anglez), 0},
             {0,0,1}
         };
         vector<vector<float>> rotationXMatrix = {
             {1,0,0},
-            {0, cos(angle), -1*sin(angle)},
-            {0, sin(angle), cos(angle)}
+            {0, cos(anglex), -1*sin(anglex)},
+            {0, sin(anglex), cos(anglex)}
         };
         vector<vector<float>> rotationYMatrix = {
-            {cos(angle),0,sin(angle)},
+            {cos(angley),0,sin(angley)},
             {0,1,0},
-            {-1*sin(angle),0,cos(angle)}
+            {-1*sin(angley),0,cos(angley)}
         };
         
     
@@ -192,7 +192,7 @@ main (int argc, char *argv[])
             vector<float> projected = project2D(rotatedYPoint);
             float x = cubePOSX+projected.at(0)*cubeScale;
             float y = cubePOSY+projected.at(1)*cubeScale;
-            canvas->SetPixel((int) x, (int) y, 255, 0, 0);
+            canvas->SetPixel((int) x, (int) y, 0, 0, 255);
             rotatedPoints.push_back({(int) x, (int) y});
         }
 
@@ -216,10 +216,16 @@ main (int argc, char *argv[])
         rgb_matrix::DrawLine(canvas, rotatedPoints.at(6).at(0), rotatedPoints.at(6).at(1), rotatedPoints.at(2).at(0), rotatedPoints.at(2).at(1), color);
         rgb_matrix::DrawLine(canvas, rotatedPoints.at(7).at(0), rotatedPoints.at(7).at(1), rotatedPoints.at(3).at(0), rotatedPoints.at(3).at(1), color);
         
-        angle += 0.01;
+        anglex += 0.01;
+	angley += 0.04;
+	anglez += 0.07;
         if (cubeScale > 10){
             cubeScale -= 0.1;
         }
+	else{
+	    // set scale based off buffer
+            cubeScale = SetCubeScale(buf);
+	}
 
         signal(SIGTERM, InterruptHandler);
         signal(SIGINT, InterruptHandler);
