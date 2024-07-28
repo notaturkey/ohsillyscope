@@ -65,7 +65,10 @@ int main (int argc, char *argv[])
     Canvas *canvas = RGBMatrix::CreateFromFlags(&argc, &argv, &defaults);
     if (canvas == NULL)
         return 1;
-
+    
+    int cubeScale = 5;
+    int cubePOSX = 32;
+    int cubePOSY = 32;
     vector<vector<int>> cubePoints = {
         {1, 1, 1},
         {1, 1, -1},
@@ -77,14 +80,18 @@ int main (int argc, char *argv[])
         {-1, -1, -1}
     };
 
-    for (auto & element : cubePoints){
-        for (auto & projected : project2D(element)) {
-	        cout << projected;
-	    }
-        cout << '\n';
+
+
+    
+
+    while (true) {
+        for (auto & element : cubePoints){
+            canvas->SetPixel(cubePOSX+project2D(element).at(0), cubePOSY+project2D(element).at(1), 255, 0, 0);
+        }
+        signal(SIGTERM, InterruptHandler);
+        signal(SIGINT, InterruptHandler);
     }
 
-    canvas->SetPixel(32, 32, 255, 0, 0);
     canvas->Clear();
     return 0;
 }
