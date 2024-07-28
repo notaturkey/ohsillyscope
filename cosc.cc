@@ -33,7 +33,7 @@ static void InterruptHandler(int signo) {
 }
 
 
-vector<vector<float>> multiplyMatrices(const std::vector<std::vector<float>>& A, const std::vector<std::vector<float>>& B) {
+vector<vector<float>> multiplyMatrices(const vector<vector<float>>& A, const vector<vector<float>>& B) {
     int rowsA = A.size();
     int colsA = A[0].size();
     int rowsB = B.size();
@@ -41,11 +41,11 @@ vector<vector<float>> multiplyMatrices(const std::vector<std::vector<float>>& A,
 
     // Ensure matrices can be multiplied
     if (colsA != rowsB) {
-        throw std::invalid_argument("Number of columns in A must be equal to the number of rows in B.");
+        throw invalid_argument("Number of columns in A must be equal to the number of rows in B.");
     }
 
     // Initialize result matrix with zeros
-    std::vector<std::vector<float>> C(rowsA, std::vector<int>(colsB, 0));
+    vector<vector<float>> C(rowsA, vector<float>(colsB, 0));
 
     // Perform matrix multiplication
     for (int i = 0; i < rowsA; ++i) {
