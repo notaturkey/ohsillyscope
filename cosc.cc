@@ -25,15 +25,14 @@
 
 using rgb_matrix::RGBMatrix;
 using rgb_matrix::Canvas;
-
-
 using namespace std;
+
 volatile bool interrupt_received = false;
 static void InterruptHandler(int signo) {
   interrupt_received = true;
 }
 
-static vector project2D (vector<int> point){
+vector<int> project2D (vector<int> point) {
     vector<int> projectedPoint;
     vector<vector<int>> projectionMatrix = {
         {1,0,0},
@@ -46,14 +45,14 @@ static vector project2D (vector<int> point){
         for (auto & projectionMatrixPoint : element){
             product += projectionMatrixPoint * point.at(i);
         }
-        int i += 1;
+        i += 1;
         projectedPoint.push_back(product);
     }
 
-    return projectedPoint
+    return projectedPoint;
 }
 
-main (int argc, char *argv[])
+int main (int argc, char *argv[])
 {
     // matrix is hardcoded for 64x64 unless someone wants to fix that
     RGBMatrix::Options defaults;
@@ -66,7 +65,7 @@ main (int argc, char *argv[])
     if (canvas == NULL)
         return 1;
 
-    vector<vector<int>> cube_points = {
+    vector<vector<int>> cubePoints = {
         {1, 1, 1},
         {1, 1, -1},
         {1, -1, 1},
@@ -77,11 +76,15 @@ main (int argc, char *argv[])
         {-1, -1, -1}
     };
     
-    for (auto & element : cube_points){
-        cout << project2D(element);
+    project2D(cubePoints.at(0));
+
+    for (auto & element : cubePoints){
+        for (auto & projected : project2D(element)){
+	    cout << projected << '\n';
+	}
     }
 
     canvas->SetPixel(32, 32, 255, 0, 0);
     canvas->Clear();
-    exit (0);
+    return 0;
 }
