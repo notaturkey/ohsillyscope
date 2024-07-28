@@ -98,7 +98,7 @@ int main (int argc, char *argv[])
     int cubePOSX = 32;
     int cubePOSY = 32;
     float angle = 0;
-    vector<vector<float>> cubePoints = {
+    vector<vector<vector<float>>> cubePoints = {
         {{1, 1, 1}},
         {{1, 1, -1}},
         {{1, -1, 1}},
