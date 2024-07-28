@@ -33,7 +33,7 @@ static void InterruptHandler(int signo) {
   interrupt_received = true;
 }
 
-vector project2D (vector<int> point){
+static vector project2D (vector<int> point){
     vector<int> projectedPoint;
     vector<vector<int>> projectionMatrix = {
         {1,0,0},
@@ -82,9 +82,6 @@ main (int argc, char *argv[])
     }
 
     canvas->SetPixel(32, 32, 255, 0, 0);
-
-    
-    snd_pcm_close (capture_handle);
     canvas->Clear();
     exit (0);
 }
