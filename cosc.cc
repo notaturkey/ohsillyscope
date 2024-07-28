@@ -116,12 +116,15 @@ int main (int argc, char *argv[])
             {0,0,1}
         };
 
-        vector<vector<float>> projectedMatrix = project2D(cubePoints);
+        
 
-        for (auto & element : projectedMatrix){
-            int x = (int) cubePOSX+element.at(0)*cubeScale;
-            int y = (int) cubePOSY+element.at(1)*cubeScale;
-            canvas->SetPixel(x, y, 255, 0, 0);
+        for (auto & point : cubePoints){
+            vector<vector<float>> projected = project2D(point);
+            for (auto & element : projected){
+                int x = (int) cubePOSX+element.at(0)*cubeScale;
+                int y = (int) cubePOSY+element.at(1)*cubeScale;
+                canvas->SetPixel(x, y, 255, 0, 0);
+            }
         }
         angle += 0.01;
 
