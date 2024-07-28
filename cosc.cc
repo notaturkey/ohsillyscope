@@ -59,7 +59,7 @@ vector<vector<float>> multiplyMatrices(vector<vector<float>> A,vector<vector<flo
     return C;
 }
 
-vector<float> project2D (vector<vector<float>> matrix) {
+vector<vector<float>> project2D (vector<vector<float>> matrix) {
     vector<float> projectedPoint;
     vector<vector<float>> projectionMatrix = {
         {1,0,0},
