@@ -30,32 +30,25 @@ float CalculateRMS(const short buf[], int size) {
     return sqrt(sum / size);
 }
 
-float SetCubeScale(const short buf[], int size) {
+float SetCubeScale(const short buf[], int size, float &cubeScale) {
     float rms = CalculateRMS(buf, size);
     // Define a threshold for significant amplitude
     float threshold = 2000; // Adjust this value as needed
-    if (rms > threshold) {
-        return 15;
-    } else {
-        return 10;
-    }
-}
+    float scaleDecrease = 0.01; // Amount to decrease scale if no significant amplitude
 
-// float SetCubeScale(short buf[]){
-//     // audio wave has minimum amplitude of -32,768 and a maximum value of 32,767
-//     int isClipping = 0;
-//     int cubeScale = 10;
-//     for (int i=0; i<128; i++){
-//         if(buf[i] < -32767 || buf[i] > 32766){
-//             isClipping += 1;
-//         }
-//     }
-    
-//     if(isClipping > 32){
-//         cubeScale = 15;
-//     }
-//     return cubeScale;
-// }
+    if (rms > threshold) {
+        if (cubeScale > 15) {
+            cubeScale = 15; // Cap the maximum scale
+        }
+    } else {
+        cubeScale -= scaleDecrease;
+        if (cubeScale < 10) {
+            cubeScale = 10; // Set minimum scale limit
+        }
+    }
+
+    return cubeScale;
+}
 
 vector<float> multiplyMatrices(const vector<vector<float>>& A, const vector<float>& B) {
     vector<float> C(A.size(), 0); // Initialize result vector with zeros
@@ -216,7 +209,7 @@ main (int argc, char *argv[])
         }
 
         // draw cube
-	canvas->Clear();
+        canvas->Clear();
         // first pane
         rgb_matrix::DrawLine(canvas, rotatedPoints.at(0).at(0), rotatedPoints.at(0).at(1), rotatedPoints.at(1).at(0), rotatedPoints.at(1).at(1), color);
         rgb_matrix::DrawLine(canvas, rotatedPoints.at(1).at(0), rotatedPoints.at(1).at(1), rotatedPoints.at(3).at(0), rotatedPoints.at(3).at(1), color);
@@ -236,14 +229,14 @@ main (int argc, char *argv[])
         rgb_matrix::DrawLine(canvas, rotatedPoints.at(7).at(0), rotatedPoints.at(7).at(1), rotatedPoints.at(3).at(0), rotatedPoints.at(3).at(1), color);
         
         anglex += 0.01;
-	angley += 0.0004;
-	anglez += 0.0007;
+        angley += 0.0004;
+        anglez += 0.0007;
         if (cubeScale > 10){
             cubeScale -= 0.01;
         }
 	    // set scale based off buffer
-            cubeScale = SetCubeScale(buf);
-	signal(SIGTERM, InterruptHandler);
+        cubeScale = SetCubeScale(buf);
+        signal(SIGTERM, InterruptHandler);
         signal(SIGINT, InterruptHandler);
     }
 
