@@ -197,6 +197,7 @@ main (int argc, char *argv[])
         }
 
         // draw cube
+	canvas->Clear();
         // first pane
         rgb_matrix::DrawLine(canvas, rotatedPoints.at(0).at(0), rotatedPoints.at(0).at(1), rotatedPoints.at(1).at(0), rotatedPoints.at(1).at(1), color);
         rgb_matrix::DrawLine(canvas, rotatedPoints.at(1).at(0), rotatedPoints.at(1).at(1), rotatedPoints.at(3).at(0), rotatedPoints.at(3).at(1), color);
@@ -215,7 +216,6 @@ main (int argc, char *argv[])
         rgb_matrix::DrawLine(canvas, rotatedPoints.at(6).at(0), rotatedPoints.at(6).at(1), rotatedPoints.at(2).at(0), rotatedPoints.at(2).at(1), color);
         rgb_matrix::DrawLine(canvas, rotatedPoints.at(7).at(0), rotatedPoints.at(7).at(1), rotatedPoints.at(3).at(0), rotatedPoints.at(3).at(1), color);
         
-        canvas->Clear();
         angle += 0.001;
         if (cubeScale > 10){
             cubeScale -= 1;
