@@ -79,9 +79,10 @@ int main (int argc, char *argv[])
     project2D(cubePoints.at(0));
 
     for (auto & element : cubePoints){
-        for (auto & projected : project2D(element)){
-	    cout << projected << '\n';
-	}
+        for (auto & projected : project2D(element)) {
+	        cout << projected;
+	    }
+        cout << '\n';
     }
 
     canvas->SetPixel(32, 32, 255, 0, 0);
