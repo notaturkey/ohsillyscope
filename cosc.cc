@@ -33,17 +33,13 @@ static void InterruptHandler(int signo) {
 }
 
 
-vector<float> multiplyMatrices(vector<vector<float>> A,vector<float> B) {
-    // Initialize result matrix with zeros
-    vector<float> C;
-    int i = 0;
-    for (auto & element : A){    
-        float product = 0;
-        for (auto & APoint : element){
-            product += APoint * B.at(i);
+vector<float> multiplyMatrices(const vector<vector<float>>& A, const vector<float>& B) {
+    vector<float> C(A.size(), 0); // Initialize result vector with zeros
+
+    for (size_t i = 0; i < A.size(); ++i) {
+        for (size_t j = 0; j < B.size(); ++j) {
+            C[i] += A[i][j] * B[j];
         }
-        i += 1;
-        C.push_back(product);
     }
 
     return C;
@@ -113,8 +109,8 @@ main (int argc, char *argv[])
             float y = cubePOSY+projected.at(1)*cubeScale;
             canvas->SetPixel((int) x, (int) y, 255, 0, 0);
         }
-	usleep(500000);
-	canvas->Clear();
+        usleep(500000);
+        canvas->Clear();
         angle += 0.1;
         signal(SIGTERM, InterruptHandler);
         signal(SIGINT, InterruptHandler);
