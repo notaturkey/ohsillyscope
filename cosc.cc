@@ -112,9 +112,10 @@ main (int argc, char *argv[])
             {-1*sin(angle),0,cos(angle)}
         };
         
-        Color color(255, 255, 0);
-        rgb_matrix::DrawLine(canvas, 10, 10, 15, 15, color);
-        for (auto & point : cubePoints){
+	rgb_matrix::Color color(255, 255, 0);
+        
+	vector<vector<int>> rotatedPoints={};
+        for (auto & point : cubePoints){	
             vector<float> rotatedZPoint = multiplyMatrices(rotationZMatrix,point);
             vector<float> rotatedXPoint = multiplyMatrices(rotationXMatrix,rotatedZPoint);
             vector<float> rotatedYPoint = multiplyMatrices(rotationYMatrix,rotatedXPoint);
@@ -122,7 +123,10 @@ main (int argc, char *argv[])
             float x = cubePOSX+projected.at(0)*cubeScale;
             float y = cubePOSY+projected.at(1)*cubeScale;
             canvas->SetPixel((int) x, (int) y, 255, 0, 0);
+	    rotatedPoints.push_back({(int) x, (int) y});
         }
+        rgb_matrix::DrawLine(canvas, rotatedPoints.at(0).at(0), rotatedPoints.at(0).at(1), rotatedPoints.at(1).at(0), rotatedPoints.at(1).at(1), color);
+	usleep(50000);
         canvas->Clear();
         angle += 0.1;
         signal(SIGTERM, InterruptHandler);
