@@ -33,7 +33,7 @@ static void InterruptHandler(int signo) {
 }
 
 
-vector<vector<float>> multiplyMatrices(const vector<vector<float>>& A, const vector<vector<float>>& B) {
+vector<vector<float>> multiplyMatrices(vector<vector<float>> A,bvector<vector<float>> B) {
     int rowsA = A.size();
     int colsA = A[0].size();
     int rowsB = B.size();
