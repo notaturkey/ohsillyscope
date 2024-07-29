@@ -33,13 +33,11 @@ float CalculateRMS(const short buf[], int size) {
 float SetCubeScale(const short buf[], int size, float &cubeScale) {
     float rms = CalculateRMS(buf, size);
     // Define a threshold for significant amplitude
-    float threshold = 2000; // Adjust this value as needed
-    float scaleDecrease = 0.01; // Amount to decrease scale if no significant amplitude
+    float threshold = 3000; // Adjust this value as needed
+    float scaleDecrease = 0.5; // Amount to decrease scale if no significant amplitude
 
     if (rms > threshold) {
-        if (cubeScale > 15) {
-            cubeScale = 15; // Cap the maximum scale
-        }
+        cubeScale = 15; // Cap the maximum scale
     } else {
         cubeScale -= scaleDecrease;
         if (cubeScale < 10) {
@@ -229,13 +227,10 @@ main (int argc, char *argv[])
         rgb_matrix::DrawLine(canvas, rotatedPoints.at(7).at(0), rotatedPoints.at(7).at(1), rotatedPoints.at(3).at(0), rotatedPoints.at(3).at(1), color);
         
         anglex += 0.01;
-        angley += 0.0004;
-        anglez += 0.0007;
-        if (cubeScale > 10){
-            cubeScale -= 0.01;
-        }
-	    // set scale based off buffer
-        cubeScale = SetCubeScale(buf, 128);
+        angley += 0.004;
+        anglez += 0.007;
+	// set scale based off buffer
+        cubeScale = SetCubeScale(buf, 128, cubeScale);
         signal(SIGTERM, InterruptHandler);
         signal(SIGINT, InterruptHandler);
     }
