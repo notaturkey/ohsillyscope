@@ -12,13 +12,14 @@
 #include <chrono>
 #include <thread>
 #include <fftw3.h>
+#include <ctime>
 
 using rgb_matrix::RGBMatrix;
 using rgb_matrix::Canvas;
 using namespace std;
 
 #define FFT_SIZE 1024
-#define AUDIO_BUFFER_SIZE (FFT_SIZE * 2)  // 2x for stereo
+#define AUDIO_BUFFER_SIZE (FFT_SIZE * 2)
 
 volatile bool interrupt_received = false;
 static void InterruptHandler(int signo) {
@@ -44,16 +45,13 @@ vector<float> project2D(vector<float> vertex) {
 
 float ScaleFromFFT(fftw_complex* out, int fft_size, float sample_rate, float& cubeScale) {
     double bin_width = sample_rate / fft_size;
-    int low_freq_bin_limit = 4; // Covers ~43–172 Hz
+    int low_freq_bin_limit = 4; // Up to ~172Hz
     double low_freq_energy = 0;
 
     for (int i = 1; i <= low_freq_bin_limit; ++i) {
         double mag = sqrt(out[i][0] * out[i][0] + out[i][1] * out[i][1]);
         low_freq_energy += mag;
     }
-
-    // Debug output (optional)
-    // std::cout << "Low frequency energy: " << low_freq_energy << std::endl;
 
     float threshold = 0.3;
     if (low_freq_energy > threshold) {
@@ -66,7 +64,22 @@ float ScaleFromFFT(fftw_complex* out, int fft_size, float sample_rate, float& cu
     return cubeScale;
 }
 
+bool DetectHighFrequencies(fftw_complex* out, int start_bin, int end_bin, double threshold) {
+    double energy = 0;
+    for (int i = start_bin; i <= end_bin; ++i) {
+        double mag = sqrt(out[i][0] * out[i][0] + out[i][1] * out[i][1]);
+        energy += mag;
+    }
+    return energy > threshold;
+}
+
+rgb_matrix::Color RandomColor() {
+    return rgb_matrix::Color(rand() % 256, rand() % 256, rand() % 256);
+}
+
 int main(int argc, char* argv[]) {
+    srand(time(NULL)); // seed random for color changes
+
     RGBMatrix::Options defaults;
     defaults.hardware_mapping = "adafruit-hat";
     defaults.rows = 64;
@@ -76,16 +89,16 @@ int main(int argc, char* argv[]) {
     Canvas* canvas = RGBMatrix::CreateFromFlags(&argc, &argv, &defaults);
     if (canvas == NULL) return 1;
 
-    rgb_matrix::Color color(0, 0, 255);
+    rgb_matrix::Color color(0, 0, 255); // Initial color
     float cubeScale = 10;
     int cubePOSX = 32, cubePOSY = 32;
     float anglex = 0, angley = 0, anglez = 0;
+
     vector<vector<float>> cubePoints = {
         {1, 1, 1}, {1, 1, -1}, {1, -1, 1}, {1, -1, -1},
         {-1, 1, -1}, {-1, 1, 1}, {-1, -1, 1}, {-1, -1, -1}
     };
 
-    // Audio
     short buf[AUDIO_BUFFER_SIZE];
     double fft_input[FFT_SIZE];
     fftw_complex fft_output[FFT_SIZE / 2 + 1];
@@ -119,11 +132,8 @@ int main(int argc, char* argv[]) {
             continue;
         }
 
-        // Convert stereo to mono and normalize
         for (int i = 0; i < AUDIO_BUFFER_SIZE; i += 2) {
             double mono = (buf[i] + buf[i + 1]) / 2.0 / 32768.0;
-
-            // Apply Hanning window
             int index = i / 2;
             double window = 0.5 * (1 - cos(2 * M_PI * index / (FFT_SIZE - 1)));
             fft_input[index] = mono * window;
@@ -132,7 +142,14 @@ int main(int argc, char* argv[]) {
         fftw_execute(plan);
         cubeScale = ScaleFromFFT(fft_output, FFT_SIZE, rate, cubeScale);
 
-        // Rotation matrices
+        // High-frequency band detection (e.g., 5kHz–12kHz)
+        int hi_start_bin = static_cast<int>(5000 / (rate / FFT_SIZE));
+        int hi_end_bin   = static_cast<int>(12000 / (rate / FFT_SIZE));
+        if (DetectHighFrequencies(fft_output, hi_start_bin, hi_end_bin, 1.0)) {
+            color = RandomColor();
+        }
+
+        // Rotations
         vector<vector<float>> rotationZ = {
             {cos(anglez), -sin(anglez), 0},
             {sin(anglez), cos(anglez), 0},
@@ -171,7 +188,7 @@ int main(int argc, char* argv[]) {
         rgb_matrix::DrawLine(canvas, rotatedPoints[5][0], rotatedPoints[5][1], rotatedPoints[6][0], rotatedPoints[6][1], color);
         rgb_matrix::DrawLine(canvas, rotatedPoints[6][0], rotatedPoints[6][1], rotatedPoints[7][0], rotatedPoints[7][1], color);
         rgb_matrix::DrawLine(canvas, rotatedPoints[7][0], rotatedPoints[7][1], rotatedPoints[4][0], rotatedPoints[4][1], color);
-        // Connecting lines
+        // Connections
         rgb_matrix::DrawLine(canvas, rotatedPoints[4][0], rotatedPoints[4][1], rotatedPoints[1][0], rotatedPoints[1][1], color);
         rgb_matrix::DrawLine(canvas, rotatedPoints[5][0], rotatedPoints[5][1], rotatedPoints[0][0], rotatedPoints[0][1], color);
         rgb_matrix::DrawLine(canvas, rotatedPoints[6][0], rotatedPoints[6][1], rotatedPoints[2][0], rotatedPoints[2][1], color);
