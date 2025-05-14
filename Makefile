@@ -24,7 +24,7 @@ cosc.o: cosc.cc
 	$(CXX) -I$(RGB_INCDIR) $(CXXFLAGS) cosc.cc -c -o $@ -lasound $(LDFLAGS) $(RGB_LDFLAGS) 
 
 coscfwt: coscfwt.o
-	$(CXX) $(CXXFLAGS) cosc.o -o $@ -lasound -lfftw3 $(LDFLAGS) $(RGB_LDFLAGS)
+	$(CXX) $(CXXFLAGS) coscfwt.o -o $@ -lasound -lfftw3 $(LDFLAGS) $(RGB_LDFLAGS)
 
 coscfwt.o: coscfwt.cc
-	$(CXX) -I$(RGB_INCDIR) $(CXXFLAGS) cosc.cc -c -o $@ -lasound -lfftw3 $(LDFLAGS) $(RGB_LDFLAGS) 
+	$(CXX) -I$(RGB_INCDIR) $(CXXFLAGS) coscfwt.cc -c -o $@ -lasound -lfftw3 $(LDFLAGS) $(RGB_LDFLAGS) 
