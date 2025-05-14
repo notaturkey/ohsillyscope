@@ -28,3 +28,9 @@ coscfwt: coscfwt.o
 
 coscfwt.o: coscfwt.cc
 	$(CXX) -I$(RGB_INCDIR) $(CXXFLAGS) coscfwt.cc -c -o $@ -lasound -lfftw3 $(LDFLAGS) $(RGB_LDFLAGS) 
+
+coscPeak: coscPeak.o
+	$(CXX) $(CXXFLAGS) coscPeak.o -o $@ -lasound -lfftw3 $(LDFLAGS) $(RGB_LDFLAGS)
+
+coscPeak.o: coscPeak.cc
+	$(CXX) -I$(RGB_INCDIR) $(CXXFLAGS) coscPeak.cc -c -o $@ -lasound -lfftw3 $(LDFLAGS) $(RGB_LDFLAGS) 
