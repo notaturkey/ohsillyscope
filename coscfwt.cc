@@ -53,16 +53,23 @@ float ScaleFromFFT(fftw_complex* out, int fft_size, float sample_rate, float& cu
         low_freq_energy += mag;
     }
 
-    float threshold = 0.3;
-    if (low_freq_energy > threshold) {
-        cubeScale = 15;
-    } else {
-        cubeScale -= 0.5;
-        if (cubeScale < 10) cubeScale = 10;
-    }
+    // Scale the cube size based on the energy
+    // Adjust these constants as needed for visual appeal
+    float minScale = 10.0f;
+    float maxScale = 20.0f;
+    float gain = 2.0f;  // Amplifies the energy response
+
+    float targetScale = minScale + (low_freq_energy * gain);
+    if (targetScale > maxScale) targetScale = maxScale;
+    if (targetScale < minScale) targetScale = minScale;
+
+    // Optionally smooth the scaling to avoid jitter
+    float smoothing = 0.2f;  // Between 0 (no smoothing) and 1 (full smoothing)
+    cubeScale = (1 - smoothing) * targetScale + smoothing * cubeScale;
 
     return cubeScale;
 }
+
 
 bool DetectHighFrequencies(fftw_complex* out, int start_bin, int end_bin, double threshold) {
     double energy = 0;
