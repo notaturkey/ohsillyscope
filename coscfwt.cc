@@ -44,11 +44,11 @@ vector<float> project2D(vector<float> vertex) {
 }
 
 float ScaleFromFFT(fftw_complex* out, int fft_size, float sample_rate, float& cubeScale) {
-    double bin_width = sample_rate / fft_size;
-    int low_freq_bin_limit = 4; // Up to ~172Hz
-    double low_freq_energy = 0;
+    int low_freq_start_bin = 1;
+    int low_freq_end_bin = 8;  // ~43–344 Hz
 
-    for (int i = 1; i <= low_freq_bin_limit; ++i) {
+    double low_freq_energy = 0;
+    for (int i = low_freq_start_bin; i <= low_freq_end_bin; ++i) {
         double mag = sqrt(out[i][0] * out[i][0] + out[i][1] * out[i][1]);
         low_freq_energy += mag;
     }
@@ -142,14 +142,15 @@ int main(int argc, char* argv[]) {
         fftw_execute(plan);
         cubeScale = ScaleFromFFT(fft_output, FFT_SIZE, rate, cubeScale);
 
-        // High-frequency band detection (e.g., 5kHz–12kHz)
-        int hi_start_bin = static_cast<int>(5000 / (rate / FFT_SIZE));
-        int hi_end_bin   = static_cast<int>(12000 / (rate / FFT_SIZE));
-        if (DetectHighFrequencies(fft_output, hi_start_bin, hi_end_bin, 1.0)) {
+        // Wide high-frequency band: ~4–16kHz
+        int hi_freq_start_bin = static_cast<int>(4000 / (rate / FFT_SIZE));
+        int hi_freq_end_bin = static_cast<int>(16000 / (rate / FFT_SIZE));
+
+        if (DetectHighFrequencies(fft_output, hi_freq_start_bin, hi_freq_end_bin, 1.0)) {
             color = RandomColor();
         }
 
-        // Rotations
+        // Rotation matrices
         vector<vector<float>> rotationZ = {
             {cos(anglez), -sin(anglez), 0},
             {sin(anglez), cos(anglez), 0},
@@ -178,17 +179,15 @@ int main(int argc, char* argv[]) {
         }
 
         canvas->Clear();
-        // First pane
+        // Draw cube lines
         rgb_matrix::DrawLine(canvas, rotatedPoints[0][0], rotatedPoints[0][1], rotatedPoints[1][0], rotatedPoints[1][1], color);
         rgb_matrix::DrawLine(canvas, rotatedPoints[1][0], rotatedPoints[1][1], rotatedPoints[3][0], rotatedPoints[3][1], color);
         rgb_matrix::DrawLine(canvas, rotatedPoints[3][0], rotatedPoints[3][1], rotatedPoints[2][0], rotatedPoints[2][1], color);
         rgb_matrix::DrawLine(canvas, rotatedPoints[2][0], rotatedPoints[2][1], rotatedPoints[0][0], rotatedPoints[0][1], color);
-        // Second pane
         rgb_matrix::DrawLine(canvas, rotatedPoints[4][0], rotatedPoints[4][1], rotatedPoints[5][0], rotatedPoints[5][1], color);
         rgb_matrix::DrawLine(canvas, rotatedPoints[5][0], rotatedPoints[5][1], rotatedPoints[6][0], rotatedPoints[6][1], color);
         rgb_matrix::DrawLine(canvas, rotatedPoints[6][0], rotatedPoints[6][1], rotatedPoints[7][0], rotatedPoints[7][1], color);
         rgb_matrix::DrawLine(canvas, rotatedPoints[7][0], rotatedPoints[7][1], rotatedPoints[4][0], rotatedPoints[4][1], color);
-        // Connections
         rgb_matrix::DrawLine(canvas, rotatedPoints[4][0], rotatedPoints[4][1], rotatedPoints[1][0], rotatedPoints[1][1], color);
         rgb_matrix::DrawLine(canvas, rotatedPoints[5][0], rotatedPoints[5][1], rotatedPoints[0][0], rotatedPoints[0][1], color);
         rgb_matrix::DrawLine(canvas, rotatedPoints[6][0], rotatedPoints[6][1], rotatedPoints[2][0], rotatedPoints[2][1], color);
